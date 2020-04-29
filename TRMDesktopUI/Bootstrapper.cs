@@ -38,7 +38,9 @@ namespace TRMDesktopUI
                 //handling window in an out
                 .Singleton<IWindowManager, WindowManager>()
                 // once piece an raise an event and other piece and handles the even.
-                .Singleton<IEventAggregator, EventAggregator>();
+                .Singleton<IEventAggregator, EventAggregator>()
+                //singleton for http client.
+                .Singleton<IAPIHelper, APIHelper>();
 
             //wiring view models to views. We will use reflextion. There is a small performance hit on startup. 
             // as its on startup.
