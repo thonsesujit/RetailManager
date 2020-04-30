@@ -14,11 +14,12 @@ namespace TRMDataManager.Controllers
     {
 
         // GET: User/GetById
-        public List<UserModel> GetById()
+        [HttpGet]
+        public UserModel GetById()
         {
             string userId = RequestContext.Principal.Identity.GetUserId(); // getting user Id from user who is logged in. 
-            UserData data = new UserData();  // api model is display models and library is data access model. you might add some attribute to display model. we use automapper to add true speration.
-            return data.GetUserById(userId);
+            UserData data = new UserData(); // api model is display models and library is data access model. you might add some attribute to display model. we use automapper to add true speration.
+            return data.GetUserById(userId).First();
              
         }
 

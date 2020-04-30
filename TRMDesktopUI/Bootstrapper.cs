@@ -7,7 +7,9 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using TRMDesktopUI.Helpers;
+using TRMDesktopUI.Library.Api;
 using TRMDesktopUI.ViewModels;
+using TRMDesktopUI.Library.Models;
 
 namespace TRMDesktopUI
 {
@@ -40,7 +42,8 @@ namespace TRMDesktopUI
                 // once piece an raise an event and other piece and handles the even.
                 .Singleton<IEventAggregator, EventAggregator>()
                 //singleton for http client.
-                .Singleton<IAPIHelper, APIHelper>();
+                .Singleton<IAPIHelper, APIHelper>()
+                .Singleton<ILoggedInUserModel, LoggedInUserModel>();
 
             //wiring view models to views. We will use reflextion. There is a small performance hit on startup. 
             // as its on startup.

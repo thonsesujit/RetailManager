@@ -13,7 +13,7 @@ namespace TRMDataManager.Library.DataAccess
         public List<UserModel> GetUserById(string Id)
         {
             SqlDataAccess sql = new SqlDataAccess();
-            var p = new { Id = Id };  // ananyo.. object. 
+            var p = new { Id = Id };  // anonyomous.. object. 
 
             var output = sql.LoadData<UserModel, dynamic>("dbo.spUserLookup", p, "TRMData");
 
