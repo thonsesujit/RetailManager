@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using TRMDesktopUI.EventModels;
 using TRMDesktopUI.Library.Api;
 
 namespace TRMDesktopUI.ViewModels
@@ -13,10 +14,12 @@ namespace TRMDesktopUI.ViewModels
         private string _userName;
         private string _password;
         private IAPIHelper _apiHelper;
+        private IEventAggregator _events;
 
-        public LoginViewModel(IAPIHelper apiHelper)
+        public LoginViewModel(IAPIHelper apiHelper, IEventAggregator events)
         {
             _apiHelper = apiHelper;
+            _events = events;
         }
 
         public string UserName
@@ -96,6 +99,9 @@ namespace TRMDesktopUI.ViewModels
 
                 //capture more information about user.
                 await _apiHelper.GetLoggedInUserInfo(result.Access_Token);
+
+                //event will  be listend to UI thread.to avoid cross threading issues. Class is subscribing to logon events.
+                _events.PublishOnUIThread(new LogOnEvent());
             }
             catch (Exception ex)
             {

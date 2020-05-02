@@ -17,6 +17,10 @@ using TRMDataManager.Models;
 using TRMDataManager.Providers;
 using TRMDataManager.Results;
 
+
+/// <summary>
+/// Its created by it IDE so we don't need to touch it.
+/// </summary>
 namespace TRMDataManager.Controllers
 {
     [Authorize]

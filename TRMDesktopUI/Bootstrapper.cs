@@ -33,13 +33,14 @@ namespace TRMDesktopUI
         //if you ask for container instance. it will return this instance. We may need to get this container ti manupulate it, etc.
         protected override void Configure()
         {
-            _container.Instance(_container);
+            _container.Instance(_container)
+                .PerRequest<IProductEndpoint, ProductEndpoint>();
 
             //specially for caliburn micro
             _container
                 //handling window in an out
                 .Singleton<IWindowManager, WindowManager>()
-                // once piece an raise an event and other piece and handles the even.
+                // once piece an raise an event and other piece and handles the even. Its built in Caliburn micro.
                 .Singleton<IEventAggregator, EventAggregator>()
                 //singleton for http client.
                 .Singleton<IAPIHelper, APIHelper>()

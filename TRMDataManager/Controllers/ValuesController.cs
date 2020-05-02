@@ -6,6 +6,9 @@ using System.Net.Http;
 using System.Web.Http;
 using Microsoft.AspNet.Identity;
 
+/// <summary>
+/// Demonstration how API endpoints looks like. Get, Get with int, Post and delete
+/// </summary>
 namespace TRMDataManager.Controllers
 {
     [Authorize]
