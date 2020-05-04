@@ -12,7 +12,6 @@ namespace TRMDesktopUI.ViewModels
     {
         private IEventAggregator _events;
         private SalesViewModel _salesVM;
-        private SimpleContainer _container;
 
 
         //Dependency injection.
@@ -23,7 +22,7 @@ namespace TRMDesktopUI.ViewModels
             _salesVM = salesVM;
             _container = container;
             _events.Subscribe(this);
-            ActivateItem(_container.GetInstance<LoginViewModel>()); // login view models is per request. 
+            ActivateItem(IoC.Get<LoginViewModel>()); // login view models is per request. IOC is in version control , calibrurn micro biring in . which allows the contrainer to get instances.
 
         }
 
