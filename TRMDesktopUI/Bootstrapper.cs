@@ -10,6 +10,7 @@ using TRMDesktopUI.Helpers;
 using TRMDesktopUI.Library.Api;
 using TRMDesktopUI.ViewModels;
 using TRMDesktopUI.Library.Models;
+using TRMDesktopUI.Library.Helpers;
 
 namespace TRMDesktopUI
 {
@@ -44,6 +45,7 @@ namespace TRMDesktopUI
                 .Singleton<IEventAggregator, EventAggregator>()
                 //singleton for http client.
                 .Singleton<IAPIHelper, APIHelper>()
+                .Singleton<IConfigHelper, ConfigHelper>()
                 .Singleton<ILoggedInUserModel, LoggedInUserModel>();
 
             //wiring view models to views. We will use reflextion. There is a small performance hit on startup. 

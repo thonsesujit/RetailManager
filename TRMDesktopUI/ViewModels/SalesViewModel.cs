@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using TRMDesktopUI.Library.Api;
+using TRMDesktopUI.Library.Helpers;
 using TRMDesktopUI.Library.Models;
 
 namespace TRMDesktopUI.ViewModels
@@ -16,11 +17,12 @@ namespace TRMDesktopUI.ViewModels
         private int _itemQuantity = 1;
         private BindingList<CartItemModel> _cart = new BindingList<CartItemModel>();
         IProductEndpoint _productEndpoint;
+        IConfigHelper _configHelper;
 
-        public SalesViewModel(IProductEndpoint productEndpoint)
+        public SalesViewModel(IProductEndpoint productEndpoint, IConfigHelper configHelper)
         {
             _productEndpoint = productEndpoint;
-       
+            _configHelper = configHelper;
         }
 
         protected override async void OnViewLoaded(object view)
@@ -82,24 +84,44 @@ namespace TRMDesktopUI.ViewModels
         {
             get
             {
-                decimal subTotal = 0;
-                foreach (var item in Cart)
-                {
-                    subTotal += (item.Product.RetailPrice * item.QuantityInCart);
-                }
-
-                return subTotal.ToString("C"); // Passing format provider -C , for currency
+              
+                return CalculateSubtotal().ToString("C"); // Passing format provider -C , for currency
             }
 
         }
 
+        private decimal CalculateSubtotal()
+        {
+            decimal subTotal = 0;
+            foreach (var item in Cart)
+            {
+                subTotal += (item.Product.RetailPrice * item.QuantityInCart);
+            }
 
+            return subTotal;
+        }
+
+        private decimal CalculateTax()
+        {
+            decimal taxAmount = 0;
+            decimal taxRate = _configHelper.GetTaxRate()/100;
+            foreach (var item in Cart)
+            {
+                if (item.Product.IsTaxable)
+                {
+                    taxAmount += (item.Product.RetailPrice * item.QuantityInCart * taxRate);
+                }
+            }
+
+            return taxAmount;
+        }
+        //TODO: Solve the rounding issues.
         public string Tax
         {
             get
             {
-                //replace with calculations
-                return "$0.00";
+ 
+                return CalculateTax().ToString("C"); // Passing format provider -C , for currency
             }
 
         }
@@ -108,8 +130,8 @@ namespace TRMDesktopUI.ViewModels
         {
             get
             {
-                //replace with calculations
-                return "$0.00";
+                decimal total = CalculateSubtotal() + CalculateTax();
+                return total.ToString("C"); // Passing format provider -C , for currency
             }
 
         }
@@ -156,6 +178,8 @@ namespace TRMDesktopUI.ViewModels
             ItemQuantity = 1;
             NotifyOfPropertyChange(() => SubTotal);
             NotifyOfPropertyChange(() => Cart);
+            NotifyOfPropertyChange(() => Tax);
+            NotifyOfPropertyChange(() => Total);
 
         }
 
@@ -175,6 +199,9 @@ namespace TRMDesktopUI.ViewModels
         {
 
             NotifyOfPropertyChange(() => SubTotal);
+            NotifyOfPropertyChange(() => Tax);
+            NotifyOfPropertyChange(() => Total);
+
 
         }
 
