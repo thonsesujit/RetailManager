@@ -1,9 +1,9 @@
-﻿CREATE PROCEDURE [dbo].[spProduct_GetAll]
+﻿CREATE PROCEDURE [dbo].[spProduct_GetById]
+	@Id int
 AS
 begin
 	set nocount on;
 	SELECT Id, ProductName, [Description], RetailPrice, QuantityinStock , IsTaxable
 	FROM dbo.Product
-	ORDER BY ProductName
-
+	where Id = @Id;
 end
