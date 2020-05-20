@@ -11,6 +11,9 @@ using TRMDesktopUI.Library.Api;
 using TRMDesktopUI.ViewModels;
 using TRMDesktopUI.Library.Models;
 using TRMDesktopUI.Library.Helpers;
+using AutoMapper;
+using TRMDesktopUI.Models;
+using System.Xml;
 
 namespace TRMDesktopUI
 {
@@ -31,9 +34,29 @@ namespace TRMDesktopUI
             "PasswordChanged");
         }
 
+
+        private IMapper ConfigureAutomapper()
+        {
+            //Automapper will know at the start of the application. its gonna use reflexion . that it has to map data from one model to other.
+            var config = new MapperConfiguration(cfg =>
+            {
+                cfg.CreateMap<ProductModel, ProductDisplayModel>(); // from product model to product display model.
+                cfg.CreateMap<CartItemModel, CartItemDisplayModel>();
+            }
+            );
+
+            var output = config.CreateMapper(); // takes the configuration and creates a mapper. 
+
+            return output;
+        }
+
         //if you ask for container instance. it will return this instance. We may need to get this container ti manupulate it, etc.
         protected override void Configure()
         {
+                      
+
+            _container.Instance(ConfigureAutomapper()); // creates a singleton of IMapper.
+
             _container.Instance(_container)
                 .PerRequest<IProductEndpoint, ProductEndpoint>()
                 .PerRequest<ISaleEndpoint, SaleEndpoint>();
