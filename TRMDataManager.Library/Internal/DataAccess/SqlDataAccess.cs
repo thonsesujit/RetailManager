@@ -24,6 +24,7 @@ namespace TRMDataManager.Library.Internal.DataAccess
 
             using(IDbConnection connection = new SqlConnection(connectionString))
             {
+                //FIXME: there is an error while getting sales data.
                 List<T> rows = connection.Query<T>(storedProcedure, parameters, commandType: CommandType.StoredProcedure).ToList();
 
                 return rows;
