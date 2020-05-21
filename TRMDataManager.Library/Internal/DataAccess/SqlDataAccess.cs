@@ -52,6 +52,8 @@ namespace TRMDataManager.Library.Internal.DataAccess
             _connection = new SqlConnection(connectionString);
             _connection.Open();
             _transaction = _connection.BeginTransaction();
+
+            isClosed = false;
         }
 
         public List<T> LoadDataInTransaction<T, U>(string storedProcedure, U parameters)
@@ -70,6 +72,8 @@ namespace TRMDataManager.Library.Internal.DataAccess
                     commandType: CommandType.StoredProcedure, transaction: _transaction);   // associating transaction with the call.
 
         }
+
+        private bool isClosed = false;
         //close connection/stop transation method
         public void CommitTransaction()
         {
@@ -77,6 +81,8 @@ namespace TRMDataManager.Library.Internal.DataAccess
              _transaction?.Commit();
      
             _connection?.Close();
+            isClosed = true;
+
         }
 
 
@@ -84,6 +90,7 @@ namespace TRMDataManager.Library.Internal.DataAccess
         {
             _transaction?.Rollback(); //deletes everchanges thats been made
             _connection?.Close(); // close and dispose methods are the same.
+            isClosed = true;
 
         }
 
@@ -91,7 +98,20 @@ namespace TRMDataManager.Library.Internal.DataAccess
         //Dispose. Ceanup code no matter what. 
         public void Dispose()
         {
-            CommitTransaction();
+            if (isClosed == false)
+            {
+                try
+                {
+                    CommitTransaction();
+                }
+                catch
+                {
+
+                   //TODO:Log this
+                }
+            }
+            _transaction = null;
+            _connection = null;
         }
         //load using the transation
 

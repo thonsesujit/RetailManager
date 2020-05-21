@@ -18,4 +18,9 @@ begin
 	--identiy grabs the last identitiy, thats created in this transation. 
 	--Scope_Identity : it puts it into our ID value . gets the identy for the given scope. 
 
+	--For Transations using SQL. inside sql server . lots of overhead needs to be taken care. 
+		--insert into dbo.SaleDetail(SaleId, ProductId, Quantity, PurchasePrice, Tax)
+	 --   select  @Id, ProductId, Quantity, PurchasePrice, Tax
+		--from @TVP
+
 end
