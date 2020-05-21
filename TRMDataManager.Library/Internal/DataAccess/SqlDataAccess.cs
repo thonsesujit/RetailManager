@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 namespace TRMDataManager.Library.Internal.DataAccess
 {
     //anything outside library should not have accesst to this methods. they need to access through UserData
-    internal class SqlDataAccess
+    internal class SqlDataAccess : IDisposable
     {
         public string GetConnectionString(string name)
         {
@@ -40,6 +40,65 @@ namespace TRMDataManager.Library.Internal.DataAccess
 
             }
         }
+
+
+        //We need a open connect/start transation method
+        private IDbConnection _connection;
+        private IDbTransaction _transaction;
+        public void StartTransaction(string connectionStringName)
+        {
+            string connectionString = GetConnectionString(connectionStringName);
+
+            _connection = new SqlConnection(connectionString);
+            _connection.Open();
+            _transaction = _connection.BeginTransaction();
+        }
+
+        public List<T> LoadDataInTransaction<T, U>(string storedProcedure, U parameters)
+        {
+            // transation :  parameter name with value. check with ctrl+shift+space
+                List<T> rows = _connection.Query<T>(storedProcedure, parameters, commandType: CommandType.StoredProcedure, transaction: _transaction).ToList();
+
+                return rows;
+        }
+
+        //save using the transation
+        public void SaveDataInTransaction<T>(string storedProcedure, T parameters) //in generic common type is T , then we use U V W ...
+        {
+
+                _connection.Execute(storedProcedure, parameters,
+                    commandType: CommandType.StoredProcedure, transaction: _transaction);   // associating transaction with the call.
+
+        }
+        //close connection/stop transation method
+        public void CommitTransaction()
+        {
+          
+             _transaction?.Commit();
+     
+            _connection?.Close();
+        }
+
+
+        public void RollbackTransaction()
+        {
+            _transaction?.Rollback(); //deletes everchanges thats been made
+            _connection?.Close(); // close and dispose methods are the same.
+
+        }
+
+        //from IDispose. 
+        //Dispose. Ceanup code no matter what. 
+        public void Dispose()
+        {
+            CommitTransaction();
+        }
+        //load using the transation
+
+
+
+
+
     }
 
 }

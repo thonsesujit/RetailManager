@@ -50,6 +50,7 @@ namespace TRMDataManager.Library.DataAccess
 
                 details.Add(detail);
             }
+            //Create the sale model
 
             SaleDBModel sale = new SaleDBModel
             {
@@ -61,19 +62,39 @@ namespace TRMDataManager.Library.DataAccess
 
             sale.Total = sale.SubTotal + sale.Tax;
 
-            SqlDataAccess sql = new SqlDataAccess();
-            sql.SaveData<SaleDBModel>("dbo.spSale_Insert", sale, "TRMData");
 
-            //getting ID from the sale mode
-            sale.Id =  sql.LoadData<int, dynamic>("spSale_Lookup", new { sale.CashierId, sale.SaleDate }, "TRMData").FirstOrDefault();
-
-            //for 1000s of calls. use advanced dapper. where you transfter a table .
-            foreach (var item in details)
+            using (SqlDataAccess sql = new SqlDataAccess())
             {
-                item.SaleId = sale.Id;
-                sql.SaveData("dbo.spSaleDetail_Insert", item, "TRMData");
+                try
+                {
+                    sql.StartTransaction("TRMData");
+                    //Save the sale model
+                    sql.SaveDataInTransaction<SaleDBModel>("dbo.spSale_Insert", sale);
+
+                    //getting ID from the sale mode
+                    sale.Id = sql.LoadDataInTransaction<int, dynamic>("spSale_Lookup", new { sale.CashierId, sale.SaleDate }).FirstOrDefault();
+
+                    //finish filling in the sale detail models.
+                    //for 1000s of calls. use advanced dapper. where you transfter a table .
+                    foreach (var item in details)
+                    {
+                        item.SaleId = sale.Id;
+                        //save the sale detail models
+                        sql.SaveDataInTransaction("dbo.spSaleDetail_Insert", item);
+
+                    }
+                    sql.CommitTransaction();
+                }
+                catch 
+                {
+
+                    sql.RollbackTransaction();
+                    throw;
+                }
 
             }
+
+           
 
         }
     }
