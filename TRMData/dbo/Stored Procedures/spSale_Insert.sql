@@ -13,8 +13,9 @@ begin
 	insert into dbo.Sale(CashierId, SaleDate, SubTotal, Tax, Total)
 	values (@CashierId, @SaleDate, @SubTotal, @Tax, @Total)
 
-	select @Id = @@Identity;
+	select @Id = SCOPE_IDENTITY();
 
-	--identiy grabs the last identitiy, thats created in this transation. and it puts it into our ID value 
+	--identiy grabs the last identitiy, thats created in this transation. 
+	--Scope_Identity : it puts it into our ID value . gets the identy for the given scope. 
 
 end
