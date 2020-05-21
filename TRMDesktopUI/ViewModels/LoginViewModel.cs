@@ -102,6 +102,8 @@ namespace TRMDesktopUI.ViewModels
 
                 //event will  be listend to UI thread.to avoid cross threading issues. Class is subscribing to logon events.
                 _events.PublishOnUIThread(new LogOnEvent());
+
+                
             }
             catch (Exception ex)
             {

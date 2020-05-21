@@ -34,7 +34,7 @@ namespace TRMDesktopUI.ViewModels
         {
             get {
                 bool output = false;
-
+  
                 //FIXME : there is an error here that needs to be fixed.
                 if (string.IsNullOrWhiteSpace(_user.Token) == false)
                 {

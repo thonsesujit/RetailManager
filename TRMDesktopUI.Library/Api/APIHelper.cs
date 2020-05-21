@@ -83,10 +83,10 @@ namespace TRMDesktopUI.Library.Api
                     var result = await response.Content.ReadAsAsync<LoggedInUserModel>();
                     _loggedInUser.CreatedDate = result.CreatedDate;
                     _loggedInUser.EmailAddress = result.EmailAddress;
-                    _loggedInUser.FistName = result.FistName;
+                    _loggedInUser.FirstName = result.FirstName;
                     _loggedInUser.Id = result.Id;
                     _loggedInUser.LastName = result.LastName;
-                    _loggedInUser.Token = result.Token;
+                    _loggedInUser.Token = token;
 
 
                 }
