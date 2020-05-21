@@ -7,6 +7,7 @@ using System.Windows.Markup;
 using System.Windows.Media;
 using Caliburn.Micro;
 using TRMDesktopUI.EventModels;
+using TRMDesktopUI.Library.Api;
 using TRMDesktopUI.Library.Models;
 
 namespace TRMDesktopUI.ViewModels
@@ -16,15 +17,16 @@ namespace TRMDesktopUI.ViewModels
         private IEventAggregator _events;
         private SalesViewModel _salesVM;
         private ILoggedInUserModel _user;
-
+        private IAPIHelper _apiHelper;
 
         //Dependency injection.
         //Sales view and events these events are needed to be saved in the instance. 
-        public ShellViewModel( IEventAggregator events, SalesViewModel salesVM, ILoggedInUserModel user)
+        public ShellViewModel( IEventAggregator events, SalesViewModel salesVM, ILoggedInUserModel user ,IAPIHelper apiHelper)
         {
             _events = events;
             _salesVM = salesVM;
             _user = user;
+            _apiHelper = apiHelper;
             _events.Subscribe(this);
             ActivateItem(IoC.Get<LoginViewModel>()); // login view models is per request. IOC is in version control , calibrurn micro biring in . which allows the contrainer to get instances.
 
@@ -52,7 +54,8 @@ namespace TRMDesktopUI.ViewModels
 
         public void LogOut()
         {
-            _user.LogOffUser();
+            _user.ResetUserModel(); //clears information 
+            _apiHelper.LogOffUser(); //clears out the header
             ActivateItem(IoC.Get<LoginViewModel>()); // login view models is per request. IOC is in version control , calibrurn micro biring in . which allows the contrainer to get instances.
             NotifyOfPropertyChange(() => IsLoggedIn);
 
