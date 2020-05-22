@@ -9,6 +9,9 @@ using TRMDataManager.Library.Models;
 
 namespace TRMDataManager.Controllers
 {
+    /// <summary>
+    /// Geting your user id.
+    /// </summary>
     [Authorize]
     public class UserController : ApiController
     {

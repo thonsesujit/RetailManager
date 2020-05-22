@@ -14,7 +14,7 @@ namespace TRMDataManager.Controllers
 {
     //As long as they are authorized they can get list of the products.
     //TODO: To add admin rights to controllers.
-    [Authorize]
+    [Authorize(Roles = "Cashier")]
     public class ProductController : ApiController
     {
         // GET api/values
