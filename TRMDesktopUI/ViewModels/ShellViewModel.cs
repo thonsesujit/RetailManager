@@ -52,6 +52,12 @@ namespace TRMDesktopUI.ViewModels
             TryClose();
         }
 
+        public void UserManagement()
+        {
+            ActivateItem(IoC.Get<UserDisplayViewModel>()); // login view models is per request. IOC is in version control , calibrurn micro biring in . which allows the contrainer to get instances.
+
+        }
+
         public void LogOut()
         {
             _user.ResetUserModel(); //clears information 
