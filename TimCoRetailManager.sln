@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.28307.960
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.30104.148
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TRMDataManager", "TRMDataManager\TRMDataManager.csproj", "{25FD2AB3-3850-4014-8BB7-6940FDD9BD34}"
 EndProject
@@ -9,9 +9,15 @@ Project("{00D1A9C2-B5F0-4AF3-8072-F6C62B433612}") = "TRMData", "TRMData\TRMData.
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TRMDesktopUI", "TRMDesktopUI\TRMDesktopUI.csproj", "{A6CB34BE-2880-4337-A0E8-C3C1D78A2584}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TRMDataManager.Library", "TRMDataManager.Library\TRMDataManager.Library.csproj", "{8AC56498-BE5E-423C-A9C8-CF8DA1658ED8}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TRMDataManager.Library", "TRMDataManager.Library\TRMDataManager.Library.csproj", "{8AC56498-BE5E-423C-A9C8-CF8DA1658ED8}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TRMDesktopUI.Library", "TRMDesktopUI.Library\TRMDesktopUI.Library.csproj", "{2E6E5BCC-E045-42D4-A974-3704888AAE50}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TRMDesktopUI.Library", "TRMDesktopUI.Library\TRMDesktopUI.Library.csproj", "{2E6E5BCC-E045-42D4-A974-3704888AAE50}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Database", "Database", "{8846FACA-DE07-4AF2-84F7-BC39BFD5212C}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "API", "API", "{4E402FE8-5F00-4C0E-AB0E-25A90F1DE46D}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "WPF", "WPF", "{8CA86214-36F1-450E-A5CA-042D3A831F38}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -44,6 +50,13 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{25FD2AB3-3850-4014-8BB7-6940FDD9BD34} = {4E402FE8-5F00-4C0E-AB0E-25A90F1DE46D}
+		{D23A0235-B17D-4CE0-9649-B11E98DE29DF} = {8846FACA-DE07-4AF2-84F7-BC39BFD5212C}
+		{A6CB34BE-2880-4337-A0E8-C3C1D78A2584} = {8CA86214-36F1-450E-A5CA-042D3A831F38}
+		{8AC56498-BE5E-423C-A9C8-CF8DA1658ED8} = {4E402FE8-5F00-4C0E-AB0E-25A90F1DE46D}
+		{2E6E5BCC-E045-42D4-A974-3704888AAE50} = {8CA86214-36F1-450E-A5CA-042D3A831F38}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {C560BAB9-B480-4162-B04F-0EFD86E8ABDD}
