@@ -61,19 +61,24 @@ namespace TRMDesktopUI.ViewModels
                 //we have modified that form
                 _status.UpdateMessage("Unauthorized Access", "You do not have permission to interact with the Sales form");
                 //you need to acknowledge the dialog box first
-                _window.ShowDialog(_status, null, settings);
+                await _window.ShowDialogAsync(_status, null, settings);
 
                 }
                 else
                 {            //we have modified that form
                     _status.UpdateMessage("Fatal Exception", ex.Message);
                     //you need to acknowledge the dialog box first
-                    _window.ShowDialog(_status, null, settings);
+                    await _window.ShowDialogAsync(_status, null, settings);
 
                 }
 
                 TryClose();
             }
+        }
+
+        private void TryClose()
+        {
+            throw new NotImplementedException();
         }
 
         //to avoid async in constructor. Because constructor is supposed to be fast. 

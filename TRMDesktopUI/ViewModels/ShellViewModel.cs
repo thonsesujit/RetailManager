@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Markup;
 using System.Windows.Media;
@@ -27,8 +28,8 @@ namespace TRMDesktopUI.ViewModels
             _salesVM = salesVM;
             _user = user;
             _apiHelper = apiHelper;
-            _events.Subscribe(this);
-            ActivateItem(IoC.Get<LoginViewModel>()); // login view models is per request. IOC is in version control , calibrurn micro biring in . which allows the contrainer to get instances.
+            _events.SubscribeOnPublishedThread(this); // when u call an event, you will get back on same thread.
+            ActivateItemAsync(IoC.Get<LoginViewModel>(), new CancellationToken()); // login view models is per request. IOC is in version control , calibrurn micro biring in . which allows the contrainer to get instances.
 
         }
 
@@ -49,28 +50,35 @@ namespace TRMDesktopUI.ViewModels
 
         public void ExitApplication()
         {
-            TryClose();
+            TryCloseAsync();
         }
 
-        public void UserManagement()
+        public async Task UserManagement()
         {
-            ActivateItem(IoC.Get<UserDisplayViewModel>()); // login view models is per request. IOC is in version control , calibrurn micro biring in . which allows the contrainer to get instances.
+            await ActivateItemAsync(IoC.Get<UserDisplayViewModel>(), new CancellationToken()); // login view models is per request. IOC is in version control , calibrurn micro biring in . which allows the contrainer to get instances.
 
         }
 
-        public void LogOut()
+        public async Task  LogOut()
         {
             _user.ResetUserModel(); //clears information 
             _apiHelper.LogOffUser(); //clears out the header
-            ActivateItem(IoC.Get<LoginViewModel>()); // login view models is per request. IOC is in version control , calibrurn micro biring in . which allows the contrainer to get instances.
+            await ActivateItemAsync(IoC.Get<LoginViewModel>(), new CancellationToken()); // login view models is per request. IOC is in version control , calibrurn micro biring in . which allows the contrainer to get instances.
             NotifyOfPropertyChange(() => IsLoggedIn);
 
         }
         // after successful login we have this event triggered.
         //Conductor activates only one item at a time.
-        public void Handle(LogOnEvent message)
+        //public void Handle(LogOnEvent message)
+        //{
+        //    ActivateItem(_salesVM);
+        //    NotifyOfPropertyChange(() => IsLoggedIn);
+        //}
+
+        public async Task HandleAsync(LogOnEvent message, CancellationToken cancellationToken)
         {
-            ActivateItem(_salesVM);
+            //the reason for this is. return handle async we need to await, if we are not fully loggedin we dont wanna notify. cancellation token will cancel this task.
+            await ActivateItemAsync(_salesVM, cancellationToken);
             NotifyOfPropertyChange(() => IsLoggedIn);
         }
     }
