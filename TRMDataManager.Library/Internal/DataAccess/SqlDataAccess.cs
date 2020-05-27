@@ -1,4 +1,5 @@
 ﻿using Dapper;
+using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
@@ -13,9 +14,14 @@ namespace TRMDataManager.Library.Internal.DataAccess
     //anything outside library should not have accesst to this methods. they need to access through UserData
     internal class SqlDataAccess : IDisposable
     {
+        public SqlDataAccess(IConfiguration config)
+        {
+            _config = config;
+        }
         public string GetConnectionString(string name)
         {
-            return ConfigurationManager.ConnectionStrings[name].ConnectionString; // passing name of our connection string and returns connection string.  its gonna get he webconfig from TRMDdataManager
+            return _config.GetConnectionString(name);
+            // absolute command :passing name of our connection string and returns connection string.  its gonna get he webconfig from TRMDdataManager
         }
         //Dapper is a microORM. object relational mapper. it allows us to talk to database. get information back and maps information to object. it very fast. U is generic. i can call it any letter.
         public List<T> LoadData<T, U>(string storedProcedure, U parameters, string connectionStringName)
@@ -75,6 +81,9 @@ namespace TRMDataManager.Library.Internal.DataAccess
         }
 
         private bool isClosed = false;
+        private IConfiguration _config;
+        private readonly IConfiguration config;
+
         //close connection/stop transation method
         public void CommitTransaction()
         {
