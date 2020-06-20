@@ -34,6 +34,8 @@ namespace TRMApi.Controllers
             _context = context;
             _userManager = userManager;
         }
+
+
         // GET: User/GetById
         [HttpGet]
         public UserModel GetById()
@@ -47,7 +49,7 @@ namespace TRMApi.Controllers
         //getting user roles.
         [Authorize(Roles = "Admin")]
         [HttpGet]
-        [Route("api/User/Admin/GetAllUsers")]
+        [Route("Admin/GetAllUsers")]
         public List<ApplicationUserModel> GetAllUsers()
         {
             List<ApplicationUserModel> output = new List<ApplicationUserModel>();
@@ -86,10 +88,10 @@ namespace TRMApi.Controllers
         //how 
         [Authorize(Roles = "Admin")]
         [HttpGet]
-        [Route("api/User/Admin/GetAllRoles")]
+        [Route("Admin/GetAllRoles")]
         public Dictionary<string, string> GetAllRoles()
         {
-            List<ApplicationUserModel> output = new List<ApplicationUserModel>();
+           // List<ApplicationUserModel> output = new List<ApplicationUserModel>();
 
           
                 var roles = _context.Roles.ToDictionary(x => x.Id, x => x.Name); //it will convert (identyroles)roles into dictionary. reuse of x is not a problem. beause x is used in that context and its being destroyed. 
@@ -101,7 +103,7 @@ namespace TRMApi.Controllers
 
         [Authorize(Roles = "Admin")]
         [HttpPost]
-        [Route("api/User/Admin/AddRole")]
+        [Route("Admin/AddRole")]
         public async Task AddRole(UserRolePairModel pairing)
         {
            var user = await _userManager.FindByIdAsync(pairing.UserId);
@@ -111,7 +113,7 @@ namespace TRMApi.Controllers
 
         [Authorize(Roles = "Admin")]
         [HttpPost] //for httppost you dont want to add it in url so create a model to make an on´bject of userid and string.
-        [Route("api/User/Admin/RemoveRole")]
+        [Route("Admin/RemoveRole")]
         public async Task RemoveRole(UserRolePairModel pairing)
         {
             var user = await _userManager.FindByIdAsync(pairing.UserId);
