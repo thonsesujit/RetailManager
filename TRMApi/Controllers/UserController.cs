@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
 using TRMApi.Data;
 using TRMApi.Models;
 using TRMDataManager.Library.DataAccess;
@@ -20,8 +21,13 @@ namespace TRMApi.Controllers
     [Authorize]
     public class UserController : ControllerBase
     {
+        public UserController(IConfiguration config)
+        {
+            _config = config;
+        }
         private readonly ApplicationDbContext _context;
         private readonly UserManager<IdentityUser> _userManager;
+        private readonly IConfiguration _config;
 
         public UserController(ApplicationDbContext context, UserManager<IdentityUser> userManager)
         {
@@ -33,7 +39,7 @@ namespace TRMApi.Controllers
         public UserModel GetById()
         {
             string userId = User.FindFirstValue(ClaimTypes.NameIdentifier); // OLD way: RequestContext.Principal.Identity.GetUserId(); // getting user Id from user who is logged in. 
-            UserData data = new UserData(); // api model is display models and library is data access model. you might add some attribute to display model. we use automapper to add true speration.
+            UserData data = new UserData(_config); // api model is display models and library is data access model. you might add some attribute to display model. we use automapper to add true speration.
             return data.GetUserById(userId).First();
 
         }
