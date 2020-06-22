@@ -20,6 +20,7 @@ namespace TRMDataManager.Library.DataAccess
         {
             _config = config;
         }
+
         public void SaveSale(SaleModel saleInfo, string cashierId)
         {
             //TODO: make a SOLID/DRY/better

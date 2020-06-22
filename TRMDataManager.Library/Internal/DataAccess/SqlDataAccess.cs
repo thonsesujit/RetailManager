@@ -18,10 +18,15 @@ namespace TRMDataManager.Library.Internal.DataAccess
         {
             _config = config;
         }
+    
+
         public string GetConnectionString(string name)
         {
+
             return _config.GetConnectionString(name);
-            // absolute command :passing name of our connection string and returns connection string.  its gonna get he webconfig from TRMDdataManager
+
+            //return @"Data Source=(localdb)\MSSQLLocalDB;Initial Catalog=TRMData;Integrated Security=True;Connect Timeout=30;Encrypt=False;TrustServerCertificate=False;ApplicationIntent=ReadWrite;MultiSubnetFailover=False";
+            // Old way: return ConfigurationManager.ConnectionStrings[name].ConnectionString; // passing name of our connection string and returns connection string.  its gonna get he webconfig from TRMDdataManager
         }
         //Dapper is a microORM. object relational mapper. it allows us to talk to database. get information back and maps information to object. it very fast. U is generic. i can call it any letter.
         public List<T> LoadData<T, U>(string storedProcedure, U parameters, string connectionStringName)
@@ -81,8 +86,8 @@ namespace TRMDataManager.Library.Internal.DataAccess
         }
 
         private bool isClosed = false;
-        private IConfiguration _config;
-        private readonly IConfiguration config;
+        private readonly IConfiguration _config;
+
 
         //close connection/stop transation method
         public void CommitTransaction()
