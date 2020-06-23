@@ -12,13 +12,13 @@ using System.Threading.Tasks;
 namespace TRMDataManager.Library.Internal.DataAccess
 {
     //anything outside library should not have accesst to this methods. they need to access through UserData
-    internal class SqlDataAccess : IDisposable
+    public class SqlDataAccess : IDisposable, ISqlDataAccess
     {
         public SqlDataAccess(IConfiguration config)
         {
             _config = config;
         }
-    
+
 
         public string GetConnectionString(string name)
         {
@@ -33,7 +33,7 @@ namespace TRMDataManager.Library.Internal.DataAccess
         {
             string connectionString = GetConnectionString(connectionStringName);
 
-            using(IDbConnection connection = new SqlConnection(connectionString))
+            using (IDbConnection connection = new SqlConnection(connectionString))
             {
                 //FIXME: there is an error while getting sales data.
                 List<T> rows = connection.Query<T>(storedProcedure, parameters, commandType: CommandType.StoredProcedure).ToList();
@@ -71,17 +71,17 @@ namespace TRMDataManager.Library.Internal.DataAccess
         public List<T> LoadDataInTransaction<T, U>(string storedProcedure, U parameters)
         {
             // transation :  parameter name with value. check with ctrl+shift+space
-                List<T> rows = _connection.Query<T>(storedProcedure, parameters, commandType: CommandType.StoredProcedure, transaction: _transaction).ToList();
+            List<T> rows = _connection.Query<T>(storedProcedure, parameters, commandType: CommandType.StoredProcedure, transaction: _transaction).ToList();
 
-                return rows;
+            return rows;
         }
 
         //save using the transation
         public void SaveDataInTransaction<T>(string storedProcedure, T parameters) //in generic common type is T , then we use U V W ...
         {
 
-                _connection.Execute(storedProcedure, parameters,
-                    commandType: CommandType.StoredProcedure, transaction: _transaction);   // associating transaction with the call.
+            _connection.Execute(storedProcedure, parameters,
+                commandType: CommandType.StoredProcedure, transaction: _transaction);   // associating transaction with the call.
 
         }
 
@@ -92,9 +92,9 @@ namespace TRMDataManager.Library.Internal.DataAccess
         //close connection/stop transation method
         public void CommitTransaction()
         {
-          
-             _transaction?.Commit();
-     
+
+            _transaction?.Commit();
+
             _connection?.Close();
             isClosed = true;
 
@@ -122,7 +122,7 @@ namespace TRMDataManager.Library.Internal.DataAccess
                 catch
                 {
 
-                   //TODO:Log this
+                    //TODO:Log this
                 }
             }
             _transaction = null;

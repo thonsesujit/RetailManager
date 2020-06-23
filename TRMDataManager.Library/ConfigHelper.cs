@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 
 namespace TRMDataManager.Library
 {
+    //TODO : Instead of a static class, for future it can be converted into singleton
     public class ConfigHelper
     {
         public static decimal GetTaxRate()

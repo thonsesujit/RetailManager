@@ -12,13 +12,15 @@ namespace TRMDataManager.Library.DataAccess
     /// <summary>
     /// Saving data to the database.
     /// </summary>
-    public class SaleData
+    public class SaleData : ISaleData
     {
-        private readonly IConfiguration _config;
+        private readonly IProductData _productData;
+        private readonly ISqlDataAccess _sql;
 
-        public SaleData(IConfiguration config)
+        public SaleData(IProductData productData, ISqlDataAccess sql)
         {
-            _config = config;
+            _productData = productData;
+            _sql = sql;
         }
 
         public void SaveSale(SaleModel saleInfo, string cashierId)
@@ -27,8 +29,7 @@ namespace TRMDataManager.Library.DataAccess
             // start filling in the models which we need to save in the database.
             //fill in the available information
             List<SaleDetailDBModel> details = new List<SaleDetailDBModel>();
-            ProductData products = new ProductData(_config);
-            var taxRate = ConfigHelper.GetTaxRate()/100;
+            var taxRate = ConfigHelper.GetTaxRate() / 100;
 
 
             foreach (var item in saleInfo.SaleDetails)
@@ -41,9 +42,9 @@ namespace TRMDataManager.Library.DataAccess
                 };
 
                 //Get the information about this product
-                var productInfo = products.GetProductById(item.ProductId);
+                var productInfo = _productData.GetProductById(item.ProductId);
 
-                if(productInfo == null)
+                if (productInfo == null)
                 {
                     throw new Exception($"The product Id of {item.ProductId} could not be found in the database.");
                 }
@@ -70,44 +71,45 @@ namespace TRMDataManager.Library.DataAccess
 
             sale.Total = sale.SubTotal + sale.Tax;
 
-
-            using (SqlDataAccess sql = new SqlDataAccess(_config))
+            //we can get rid of using statement when using dependency injection, because if something is instantiated by dependency injection, it will dispose it, but we 
+            // wont be controlling when it will be disposed.
+            //using statemenet is used to ensure that its disposed properly. 
+            //using (SqlDataAccess sql = new SqlDataAccess(_config))
+            //{
+            try
             {
-                try
+                _sql.StartTransaction("TRMData");
+                //Save the sale model
+                _sql.SaveDataInTransaction<SaleDBModel>("dbo.spSale_Insert", sale);
+
+                //getting ID from the sale mode
+                sale.Id = _sql.LoadDataInTransaction<int, dynamic>("spSale_Lookup", new { sale.CashierId, sale.SaleDate }).FirstOrDefault();
+
+                //finish filling in the sale detail models.
+                //for 1000s of calls. use advanced dapper. where you transfter a table .
+                foreach (var item in details)
                 {
-                    sql.StartTransaction("TRMData");
-                    //Save the sale model
-                    sql.SaveDataInTransaction<SaleDBModel>("dbo.spSale_Insert", sale);
+                    item.SaleId = sale.Id;
+                    //save the sale detail models
+                    _sql.SaveDataInTransaction("dbo.spSaleDetail_Insert", item);
 
-                    //getting ID from the sale mode
-                    sale.Id = sql.LoadDataInTransaction<int, dynamic>("spSale_Lookup", new { sale.CashierId, sale.SaleDate }).FirstOrDefault();
-
-                    //finish filling in the sale detail models.
-                    //for 1000s of calls. use advanced dapper. where you transfter a table .
-                    foreach (var item in details)
-                    {
-                        item.SaleId = sale.Id;
-                        //save the sale detail models
-                        sql.SaveDataInTransaction("dbo.spSaleDetail_Insert", item);
-
-                    }
-                    sql.CommitTransaction();
                 }
-                catch 
-                {
-
-                    sql.RollbackTransaction();
-                    throw;
-                }
-
+                _sql.CommitTransaction();
             }
-      
+            catch
+            {
+
+                _sql.RollbackTransaction();
+                throw;
+            }
+
+
+
 
         }
         public List<SaleReportModel> GetSaleReports()
         {
-            SqlDataAccess sql = new SqlDataAccess(_config);
-            var output = sql.LoadData<SaleReportModel, dynamic>("dbo.spSale_SaleReport", new { }, "TRMData");
+            var output = _sql.LoadData<SaleReportModel, dynamic>("dbo.spSale_SaleReport", new { }, "TRMData");
             return output;
         }
     }

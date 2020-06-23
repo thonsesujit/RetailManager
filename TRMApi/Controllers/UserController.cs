@@ -22,13 +22,13 @@ namespace TRMApi.Controllers
     {
         private readonly ApplicationDbContext _context;
         private readonly UserManager<IdentityUser> _userManager;
-        private readonly IConfiguration _config;
+        private readonly IUserData _userData;
 
-        public UserController(ApplicationDbContext context, UserManager<IdentityUser> userManager, IConfiguration config)
+        public UserController(ApplicationDbContext context, UserManager<IdentityUser> userManager,IUserData userData)
         {
             _context = context;
             _userManager = userManager;
-            _config = config;
+            _userData = userData;
         }
 
 
@@ -37,8 +37,8 @@ namespace TRMApi.Controllers
         public UserModel GetById()
         {
             string userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            UserData data = new UserData(_config); // api model is display models and library is data access model. you might add some attribute to display model. we use automapper to add true speration.
-            return data.GetUserById(userId).First();
+           // UserData data = new UserData(_config); // api model is display models and library is data access model. you might add some attribute to display model. we use automapper to add true speration.
+            return _userData.GetUserById(userId).First();
 
         }
 
