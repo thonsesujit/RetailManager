@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
 using TRMApi.Data;
 using TRMApi.Models;
 using TRMDataManager.Library.DataAccess;
@@ -23,12 +24,15 @@ namespace TRMApi.Controllers
         private readonly ApplicationDbContext _context;
         private readonly UserManager<IdentityUser> _userManager;
         private readonly IUserData _userData;
+        private readonly ILogger _logger;
 
-        public UserController(ApplicationDbContext context, UserManager<IdentityUser> userManager,IUserData userData)
+        public UserController(ApplicationDbContext context, UserManager<IdentityUser> userManager,
+            IUserData userData, ILogger<UserController> logger)
         {
             _context = context;
             _userManager = userManager;
             _userData = userData;
+            _logger = logger;
         }
 
 
@@ -97,7 +101,13 @@ namespace TRMApi.Controllers
         [Route("Admin/AddRole")]
         public async Task AddRole(UserRolePairModel pairing)
         {
+            //finding out info about loggedin user for logger
+            string LoggedInUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
             var user = await _userManager.FindByIdAsync(pairing.UserId);
+            _logger.LogInformation("Admin {Admin} added user {User} to role {Role}",
+                LoggedInUserId, user.Id, pairing.RoleName);
+
             await _userManager.AddToRoleAsync(user, pairing.RoleName);
 
         }
@@ -108,9 +118,12 @@ namespace TRMApi.Controllers
         [Route("Admin/RemoveRole")]
         public async Task RemoveRole(UserRolePairModel pairing)
         {
-            
-                var user = await _userManager.FindByIdAsync(pairing.UserId);
-                await _userManager.RemoveFromRoleAsync(user, pairing.RoleName);
+            string LoggedInUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+            var user = await _userManager.FindByIdAsync(pairing.UserId);
+            _logger.LogInformation("Admin {Admin} added user {User} to role {Role}",LoggedInUserId, user.Id, pairing.RoleName);
+
+            await _userManager.RemoveFromRoleAsync(user, pairing.RoleName);
             
         }
     }

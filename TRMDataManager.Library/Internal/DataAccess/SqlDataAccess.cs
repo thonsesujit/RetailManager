@@ -1,5 +1,6 @@
 ﻿using Dapper;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
@@ -14,9 +15,10 @@ namespace TRMDataManager.Library.Internal.DataAccess
     //anything outside library should not have accesst to this methods. they need to access through UserData
     public class SqlDataAccess : IDisposable, ISqlDataAccess
     {
-        public SqlDataAccess(IConfiguration config)
+        public SqlDataAccess(IConfiguration config, ILogger<SqlDataAccess> logger)
         {
             _config = config;
+            _logger = logger;
         }
 
 
@@ -87,6 +89,7 @@ namespace TRMDataManager.Library.Internal.DataAccess
 
         private bool isClosed = false;
         private readonly IConfiguration _config;
+        private readonly ILogger<SqlDataAccess> _logger;
 
 
         //close connection/stop transation method
@@ -119,10 +122,10 @@ namespace TRMDataManager.Library.Internal.DataAccess
                 {
                     CommitTransaction();
                 }
-                catch
+                catch( Exception ex)
                 {
 
-                    //TODO:Log this
+                    _logger.LogError(ex, "Commit transaction failed in the dispose method.");
                 }
             }
             _transaction = null;
